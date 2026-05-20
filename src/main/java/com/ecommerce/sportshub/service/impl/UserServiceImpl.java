@@ -21,14 +21,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
@@ -64,13 +62,13 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     @Transactional(readOnly = true)
     public Response loginUser(LoginRequest loginRequest) {
+        User user = userRepo.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new NotFoundException("Email not found"));
 
-        User user = userRepo.findByEmail(loginRequest.getEmail()).orElseThrow(()-> new NotFoundException("Email not found"));
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())){
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Password does not match");
         }
         String token = jwtUtils.generateToken(user);
@@ -87,11 +85,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Response getAllUsers() {
-
-        List<User> users = userRepo.findAll();
-        List<UserDto> userDtos = users.stream()
+        List<UserDto> userDtos = userRepo.findAll().stream()
                 .map(entityDtoMapper::mapUserToDtoBasic)
-                .collect(Collectors.toList());
+                .toList();
 
         return Response.builder()
                 .status(200)
@@ -103,10 +99,10 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public User getLoginUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String  email = authentication.getName();
-        log.info("User Email is: {}", email);
+        String email = authentication.getName();
+        // Removed PII logging — don't log user emails in production
         return userRepo.findByEmail(email)
-                .orElseThrow(()-> new UsernameNotFoundException("User Not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User Not found"));
     }
 
     @Override

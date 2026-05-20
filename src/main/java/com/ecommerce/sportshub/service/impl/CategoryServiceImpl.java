@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -44,7 +43,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @CacheEvict(value = {"categories", "categoryById"}, allEntries = true)
     public Response updateCategory(Long categoryId, CategoryDto categoryRequest) {
-        Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category Not Found"));
+        Category category = categoryRepo.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Category Not Found"));
         category.setName(categoryRequest.getName());
         categoryRepo.save(category);
         return Response.builder()
@@ -57,12 +57,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     @Cacheable(value = "categories")
     public Response getAllCategories() {
-        List<Category> categories = categoryRepo.findAll();
-        List<CategoryDto> categoryDtoList = categories.stream()
+        List<CategoryDto> categoryDtoList = categoryRepo.findAll().stream()
                 .map(entityDtoMapper::mapCategoryToDtoBasic)
-                .collect(Collectors.toList());
+                .toList();
 
-        return  Response.builder()
+        return Response.builder()
                 .status(200)
                 .categoryList(categoryDtoList)
                 .build();
@@ -72,7 +71,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     @Cacheable(value = "categoryById", key = "#categoryId")
     public Response getCategoryById(Long categoryId) {
-        Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category Not Found"));
+        Category category = categoryRepo.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Category Not Found"));
         CategoryDto categoryDto = entityDtoMapper.mapCategoryToDtoBasic(category);
         return Response.builder()
                 .status(200)
@@ -84,7 +84,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @CacheEvict(value = {"categories", "categoryById"}, allEntries = true)
     public Response deleteCategory(Long categoryId) {
-        Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category Not Found"));
+        Category category = categoryRepo.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Category Not Found"));
         categoryRepo.delete(category);
         return Response.builder()
                 .status(200)

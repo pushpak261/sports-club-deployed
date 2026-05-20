@@ -19,13 +19,13 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Response> registerUser(@RequestBody UserDto registrationRequest){
-        System.out.println(registrationRequest);
+    public ResponseEntity<Response> registerUser(@RequestBody UserDto registrationRequest) {
+        // SECURITY FIX: Removed System.out.println that was leaking user passwords to logs
         return ResponseEntity.ok(userService.registerUser(registrationRequest));
     }
+
     @PostMapping("/login")
-    public ResponseEntity<Response> loginUser(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<Response> loginUser(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(userService.loginUser(loginRequest));
     }
 }
-

@@ -27,13 +27,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class OrderItemServiceImpl implements OrderItemService {
-
 
     private final OrderRepo orderRepo;
     private final OrderItemRepo orderItemRepo;
@@ -45,12 +47,26 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     @Transactional
     public Response placeOrder(OrderRequest orderRequest) {
-
         User user = userService.getLoginUser();
 
+        // N+1 FIX: Batch-fetch ALL products in ONE query instead of N separate queries
+        Set<Long> productIds = orderRequest.getItems().stream()
+                .map(item -> item.getProductId())
+                .collect(Collectors.toSet());
+
+        Map<Long, Product> productMap = productRepo.findAllById(productIds).stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
+        // Validate all products exist
+        for (Long id : productIds) {
+            if (!productMap.containsKey(id)) {
+                throw new NotFoundException("Product Not Found with id: " + id);
+            }
+        }
+
+        // Build order items using the pre-fetched product map — O(1) lookup per item
         List<OrderItem> orderItems = orderRequest.getItems().stream().map(orderItemRequest -> {
-            Product product = productRepo.findById(orderItemRequest.getProductId())
-                    .orElseThrow(()-> new NotFoundException("Product Not Found"));
+            Product product = productMap.get(orderItemRequest.getProductId());
 
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
@@ -59,8 +75,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             orderItem.setStatus(OrderStatus.PENDING);
             orderItem.setUser(user);
             return orderItem;
-
-        }).collect(Collectors.toList());
+        }).toList();
 
         BigDecimal totalPrice = orderRequest.getTotalPrice() != null && orderRequest.getTotalPrice().compareTo(BigDecimal.ZERO) > 0
                 ? orderRequest.getTotalPrice()
@@ -78,14 +93,13 @@ public class OrderItemServiceImpl implements OrderItemService {
                 .status(200)
                 .message("Order was successfully placed")
                 .build();
-
     }
 
     @Override
     @Transactional
     public Response updateOrderItemStatus(Long orderItemId, String status) {
         OrderItem orderItem = orderItemRepo.findById(orderItemId)
-                .orElseThrow(()-> new NotFoundException("Order Item not found"));
+                .orElseThrow(() -> new NotFoundException("Order Item not found"));
 
         orderItem.setStatus(OrderStatus.valueOf(status.toUpperCase()));
         orderItemRepo.save(orderItem);
@@ -104,12 +118,12 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         Page<OrderItem> orderItemPage = orderItemRepo.findAll(spec, pageable);
 
-        if (orderItemPage.isEmpty()){
+        if (orderItemPage.isEmpty()) {
             throw new NotFoundException("No Order Found");
         }
         List<OrderItemDto> orderItemDtos = orderItemPage.getContent().stream()
                 .map(entityDtoMapper::mapOrderItemToDtoPlusProductAndUser)
-                .collect(Collectors.toList());
+                .toList();
 
         return Response.builder()
                 .status(200)
@@ -118,5 +132,4 @@ public class OrderItemServiceImpl implements OrderItemService {
                 .totalElement(orderItemPage.getTotalElements())
                 .build();
     }
-
 }
