@@ -1,0 +1,84 @@
+
+Users profile and Address Page
+---
+
+When you go to you Account its going to display your information and all your booking history.
+
+
+ProfilePage.jsx
+--
+
+Create a component const ProfilePage and we are going to have some states variable.
+First we are just going to have our userInfo This is going to contain the user information.
+We are also going to use pagination.
+
+Whenever a user, whenever someone access this endpoint, is going to immediately trigger the useEffect.
+which is going to make a call to get the user information and its going to save it as user info.
+create a method call fetchUserInfo in try method I am going to make a HTTP call to get the information of the current login user.
+so whomever is logged in is going to use the token that is logged in to make to get a call to get information of that user.
+Lets save the user information as userInfo state variable.
+Lets have a method to like handleAddressClick.
+Lets calculate pagination and return our template. orderItemList
+If we do not have error then lets display the information of the user and booking history.
+
+name, email, phoneNumber
+
+Address:
+street, city, state, zipcode, country
+
+If user already has an address than navigate to Edit Address. If it doesnt have an address navigate to the Add Address.
+So lets display the order history of the user.
+Lets have div to display the details of the product.
+
+product name, status, quantity, price.
+
+Lets have pagination also.
+
+Lets write styling for this. After that configure in App.js.
+
+
+
+AddressPage.jsx
+---
+If we click on AddAddress in profile page then it should update our address.
+So we are using useLocation to get the path and differentiate between to edit and to add.
+Lets create a functional component AddressPage. Lets initialize our address state variable using the useState. This
+is going to be used to save and hold our address input value from the user. and also if a user is coming and already
+have an address value and want to update this is also going to be used to save the existing address information.
+Lets have a variable to hold an error or to set an error.
+
+Lets going to have useEffect . And I am going just going to get the address of the user and then populate it. If the user have an address.
+Over here I am just create a method called fetchUser and this could listen to the location.pathname.
+I am also having a method called fetchUserInfo.
+Now I am having a method to set the address value from the input lets just called it handleChange.
+This is going to taking an e and I am just going to destructure this and say name, value.
+Lets create the previous address out then collect the name and update it with the matching value.
+Now lets have a method to submit the form lets called handSubmit.
+Now lets return template form.
+
+Now provide styling ...
+After that provide routing in App.js
+
+
+Note:
+Use Routes to protect our endpoints. So we dont want a user to be able to go to the profile page or the address page except
+the user is authenticated.
+So to that I am going to wrapped in ProtectedRoute to protect endpoints like ProfilePage, AddressPage.
+You have to be authenticated user before you can access the profile page.
+
+After login it will navigate to profile page.
+
+In next we are going to write implementation for Admin. So we can monitor an order, and admin to see the order.User have placed an Order and Admin to see the order we need to ship this product.
+We need to confirm the order, we need to ship the product, and whenever those orders have been confirmed, the user should be able to see that this order is being confirmed.
+and can monitor the location.
+
+
+Note:
+So an updated cost for this is going to have equal go map, where you can see the movement of the products are probably a payment as well.
+
+
+Update AddressPage.jsx bcz input is not taking due to mismatch of zipCode in input and const.
+
+
+
+

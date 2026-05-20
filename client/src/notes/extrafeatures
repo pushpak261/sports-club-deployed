@@ -1,0 +1,296 @@
+
+
+
+Integrate paypal :
+---
+
+npm install @paypal/react-paypal-js
+
+
+I have modified Cart Page and Address Page.
+
+And integrate Paypal in cart page
+
+and OrderConfirmationPage also..'
+
+PayPalButton.jsx
+OrderConfirmationPage.jsx
+
+
+
+Go to the PayPal Developer website.
+Once logged in, navigate to Dashboard and create a new REST API app under the My Apps & Credentials section. This will provide you with a Client ID.
+You can also use by default ClientId and secret key.
+
+https://developer.paypal.com/dashboard/applications/sandbox
+
+Apps And Credentials.
+
+and use this client Id and secret key in PayPalButton.jsx.
+
+
+Configure in App.js
+
+
+---
+
+npm install axios
+
+
+MapComponent.jsx
+---
+I had also used Map Component in Address Page to get the City Location. where I had used OpenCage API Key...
+and use this component directly in AddressPage.jsx.
+It track location based on city and zipcode.
+
+I had also made changes in AddressPage so that MapComponent matches with AddressPage. And also I had made change
+in App.js so when whe Add or edit Address than NavBar Component will be hidden.
+
+
+
+
+
+
+Attractive
+----
+Added Background Transparent Video to Admin Page.
+
+
+
+================================================
+
+Deploy React App on AWS S3
+----
+
+npm run build
+
+In Amazon S3 create Bucket.
+
+Bucket name : sportsfrontend
+Un tick Block all public access
+Create bucket
+
+In Properties enable static website hosting and type index.html then save it.
+
+In permission edit Bucket Policy then generate policy.
+Then select S3 Bucket as a type of policy. And in Principal put *
+And In Actions select GetObject.
+And specify ARN Resource name which is Bucket ARN copy paste it from bucket policy.
+Then Generate Policy.
+Copy that Policy and paste into Bucket Policy
+Remember in Resource put /*
+Otherwise it will not work.
+Then save Changes
+
+Now Upload contents in Bucket
+Go to Build folder copy all contents drag and drop into Bucket.
+Then Upload it.
+After uploaded go to Properties and click on Static website hosting link now our website will be visible.
+
+
+
+
+
+=====================================
+
+Mission Failed:
+---
+
+Deploying Spring Boot BackEnd on AWS
+-----
+
+
+Update pom.xml file
+
+pom.xml
+---
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+
+Intellij Idea -> view -> Tool Window -> Maven -> LifeCycle -> Double Click Package
+Now it will create a jar file for us.
+
+
+
+AWS Configuration
+--
+Create Linux instance
+pem key
+
+
+
+windows Power Shell:
+---
+Open download location of that jar file in power shell.
+
+ssh -i "C:\Users\ECS\downloads\sportsbackendnew.pem" ec2-user@ec2-13-201-134-209.ap-south-1.compute.amazonaws.com
+
+cd /home/ec2-user/
+
+java -jar sportshub-0.0.1-SNAPSHOT.jar
+
+
+sudo amazon-linux-extras enable corretto21
+sudo yum install java-21-amazon-corretto -y
+
+sudo yum update -y
+
+
+sudo yum install -y https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+
+
+
+
+======================================
+
+Amazon RDS Database Configuration
+---
+
+MySql -> Engine Version : Tick Hide Filters Both Options -> Templates (Free Tier)
+
+DB Identifier ( ecommerce )
+
+Username : admin
+
+password : password
+
+Public access : Yes
+
+Additional configuration DatabasePort : 3306
+
+Additional configuration : Initial database name (ecommerce)
+
+Now Database is Created lets just copy the endpoint from connectivity and security.
+DB URL
+
+
+Go to VPC Security Group ->
+security group id -> Edit Inbound Rule
+Delete and Add Rule
+Make it all Traffic and Anywhere Ipv4
+Add Rule Custom TCP and Anywhere Ipv4
+
+
+Go to application.properties
+change in spring.datasource.url like change localhost to DBUrl and database name
+
+
+spring.datasource.username=admin
+spring.datasource.password=password
+
+DB URL : ecommerce.cti2i4qkaojc.ap-south-1.rds.amazonaws.com
+
+
+
+Create and Configure EC2 instance
+----
+create instance linux
+create and download pem key
+copy public ip : 15.207.89.85
+
+In instance go to Security than security group and edit inbound rule as Add another Rule port:8080 or 2424
+select custom TCP port of springboot application and Anywhere IPv4 0.0.0.0/0
+
+click instance then connect it
+connect with ssh client that is terminal or git bash as administrator  locate pem file then run command chmod , then ssh -i command to connect it.
+
+Example:
+ssh -i "sportsbackend.pem" ec2-user@ec2-15-207-89-85.ap-south-1.compute.amazonaws.com
+
+sudo yum update
+install jdk
+https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/what-is-corretto-21.html
+
+
+build jar file with maven and move this jar file to ec2 server
+
+new git bash window go to the target directory by using cd command and then use ssh -i command in Example.
+
+locate pem files folder.. copying local to aws file
+scp -i "/d/pem files/sportsbackend.pem" sportshub-0.0.1-SNAPSHOT.jar ec2-user@ec2-15-207-89-85.ap-south-1.compute.amazonaws.com:/home/ec2-user
+
+Then in new git bash run ls
+
+java -jar application_name
+
+java -jar sportshub-0.0.1-SNAPSHOT.jar
+
+http://15.207.89.85::2424/
+
+In ApiService.js change base url to static BASE_URL = "http://15.207.89.85:2424";
+
+
+
+
+Testing
+===================
+
+First step is create a AWS RDS Database and then connect this database with the springboot application deploy on EC2 instance.
+and then this ec2 instance will give us public url where you can go and use our apis that we have developed in our application.
+
+create jar by configuring application.properties than deploy this jar on ec2 instance. and then we get public url then we acn use that to hit our api.
+
+create RDS Database
+
+in pom.xml go to build and provide
+<finalName>backend-app</finalName>
+
+execute
+mvn clean install
+Inside target folder jar will be created
+Now deploy this jar on ec2 instance
+
+.ppk
+
+copy public Ipv4 dns
+
+To deploy jar file on ec2 instance first connect our ec2 instance from our local machine.
+putty
+install java
+put jar in ec2 instance
+
+use winscp to upload jar
+
+
+putty -> auth -> browse private key -> connect
+type ec2-user
+
+
+sudo dnf install java-21-amazon-corretto
+
+
+winscf ->
+ec2-user, browse private key connect it
+Then move jar file from local storage to instance just drag drop.
+
+
+java -jar sportsbackend.jar
+
+
+
+Note:
+---
+Configure Inbound Rules Properly
+
+
+
+
+
+Duck DNS:
+---
+https://www.duckdns.org/domains
+
+
+
+
+
+
+
+

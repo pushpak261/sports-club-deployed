@@ -1,0 +1,202 @@
+
+
+I had updated footer code.
+
+Product Details Page, Category Page, Category Product Page
+---
+
+ProductDetailsPage.jsx (HomePage Page)
+--
+when we click product on HomePage then ProductDetailsPage will be open.
+
+Eg:
+Name
+Description
+Price
+AddToCart
+Increment, Decrement
+
+
+useParams is used to get Id from URL. custom hook is useCart.
+
+First of all I am going to get my productId from a parameter which is useParams.
+and also get my cart and dispatch from our useCart.
+I am going to have my variable to save the product and its going to be saved using setProduct. When
+you make API call we are going to use to store our product details in the product. So this is going to be useState and by default it should be null.
+
+And now just create useEffect and should keep an eye on my productId. so below I am going to create a method to fetch my product.
+Have all methods which is in ProductList.
+
+cartItem is a method it will check item is existing.
+it will return a template
+name, description, price, + -, Add To Cart
+
+Now write a styling for this. and after that provide routing in App.js.
+
+
+
+CategoryListPage.jsx
+---
+
+Eg:
+            Categories
+
+              Cricket
+              FootBall
+              Shoes
+              Others
+
+
+Lets create a component called CategoryListPage
+I am going to have a method to see all our categories when we get from our DB. I am just going to get
+our categories and set it by using useState.
+and also I am going to have an error set it to null by using useState.
+
+when you come on this page trigger a call to our DB to get all the categories.
+create a const fetchCategories. and I am going to have try, catch block. And within my try I'm just going to make a
+http call. and getAllCategory and then set category.
+
+Now have a method to handle category click. If you decide to click on this category like Cricket then it should take you to the category product page.
+where you display all products which are particular to this category.
+At last return template
+
+categoryId
+button -> category name
+
+now write styling for this.
+
+After that provide routing in App.js.
+
+
+Now when you click on any of the category it should be able to display all the products which are within this category.
+
+
+
+CategoryProductsPage.jsx
+--
+
+First of all I am going to get my categoryId from my useParam
+copy some code from home page and paste it.
+
+
+In useEffect I am going to create a method first of all keep an eye on our categoryId.
+Lets have an array to check our categoryId for our categoryId is changed and our currentPage is changed. Then we trigger
+this useEffect. so below that I am just going to have my method to fetch products.
+lets wrap in try catch block whenever we have error than set error like unable to fetch products by category Id in catch block.
+
+In useEffect call fetchProducts method to fetch Products .
+
+In App.js provide routing for this
+
+
+
+Cart Page, Registration & Login Page
+---
+
+Cart Page
+
+For now if we added an item to cart its been added to our cart. First we want to create a cart page.
+we can see all the items in your cart, you can checkout the item, you can see the total price, you can remove an item from your
+cart, you can increment and decrement the quantity of an item in your cart.
+We dont have the cart page to display
+Now write implementation for this
+
+Copy some implementation from ProductList.jsx, ProductDetailsPage.jsx
+
+
+CartPage.jsx
+--
+
+Have a method to be able to remove items from a cart to be able to increment and decrement the quantity in a cart.
+Now create a method to handle checkout. If the user click on CHECKOUT button and we know that pass the data to the backend
+to create an order. So before that just calculate the total price of the order in a cart.
+First check user is authenticated or not.
+If you click on checkout and you are not log in then you are going to navigate to the login.
+First of all getting order items. make a http call to a server to make an order. if you successfully make an order then clear cart.
+If it have an error then it should display msg like Failed to place an order.
+
+at last return template
+
+and write css for it.
+And at last configure App.js
+
+
+Go home Page add items to cart go to Cart Page and you will see cart items there and you will see total and checkout there and also for incrementing and decrementing option. and also authentication mean when you login then only
+you will see items in the cart otherwise not.
+
+
+
+Registration and login Page
+---
+
+Example:
+--
+
+                Login
+
+Email
+
+Password
+
+                  Login
+ Dont have an account? Register
+
+
+
+
+               Register
+Email:
+
+Name:
+
+Phone No:
+
+Password:
+
+           Register
+Already have an account? Login
+
+
+
+RegisterPage.jsx
+---
+
+first create a component RegisterPage and inside this have a state variable to hold our form data.
+get the fields which we required.
+and create a state means when user successfully register then it will display message.
+Once successfully register we want to navigate to a login page. so called it useNavigate.
+Lets have a method to update our data from our field. Whenever our fields or our form user passing
+an email, a name, phone number, and password. we want to update this form data which will be sending out which will be using to register a user.
+Lets call the method handleChange taking an event and going to destructure our form data.
+set the form data that the values are coming in.
+handleSubmit method I am just going to make a http call to register a user.
+At last return a template
+
+and now write styling for this and after that configure App.js
+
+
+
+LoginPage.jsx
+----
+
+Registration page is similar to login page so copy some implementation from there.
+
+For login we only need email and password.
+
+Then to handle a submit to submit a form the API is going to be loginUser. And its response is 200 means user is successfully logged in.
+And after that we are going to collect the token of the user and we are going to save it, bcz that token is what we are going to be using to authenticate
+the user regarding order pages.
+
+When user successfully logged in that it will go to ProfilePage which we are going to do next.
+And if there is any error that it will display a message like "unable to login a user"
+
+At last configure App.js
+
+
+Inspect -> Application -> Local storage { for seeing token }
+
+
+
+
+
+

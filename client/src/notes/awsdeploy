@@ -1,0 +1,247 @@
+
+
+
+Deploy in AWS:
+---
+Create EC2 instance 30gb storage, t3 micro.
+allow all inbound rules.
+create private key and use this private key in login with winscp or ubuntu.
+
+Inbound Rules:
+--
+Custom TCP    2424    IPV4
+HTTPS
+HTTP
+SSH
+All traffic
+
+Configure Api in FrontEnd
+--
+Provide ddns no ip or instance public ip address.
+
+Configure Api in BackEnd
+--
+In Cors Config provide S3 bucket link where FrontEnd is stored.
+
+Creating build folder via npm run build and transfering it into S3 Bucket.
+
+Creating backend jar file via maven in Intellij Idea
+
+Winscp:
+---
+Transferring backend jar file to instance.
+server: ubuntu
+authentication: pem key to ppk
+
+
+ubuntu login in GitBash via credentials:
+----
+sudo apt update
+sudo apt install openjdk-21-jdk
+
+sudo apt install mysql-server -y
+sudo mysql_secure_installation
+
+sudo systemctl status mysql
+sudo systemctl start mysql
+
+
+sudo mysql -u root
+
+USE mysql;
+UPDATE user SET authentication_string=PASSWORD('cdac') WHERE User='root';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'cdac';
+FLUSH PRIVILEGES;
+
+
+exit
+sudo systemctl restart mysql
+
+mysql -u root -p
+create database ecommerce;
+
+sudo systemctl start mysql
+sudo systemctl status mysql
+sudo systemctl enable mysql
+
+java -jar sportsclubbackend.java
+
+------------
+This setup will start your backend service on every reboot and automatically restart it if it stops unexpectedly.
+Adjust the RestartSec as needed for a longer or shorter delay between restarts
+===========
+
+sudo nano /etc/systemd/system/backend.service
+
+
+[Unit]
+Description=Backend Service
+After=network.target
+
+[Service]
+User=ubuntu
+ExecStart=/usr/bin/java -jar /home/ubuntu/sportsbackend.jar
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+sudo systemctl daemon-reload
+
+sudo systemctl enable backend.service
+sudo systemctl start backend.service
+sudo systemctl status backend.service
+
+
+
+
+
+
+
+
+
+
+Extra Configuration:
+----
+
+enable the socket configuration:
+---
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+uncomment socket        = /var/run/mysqld/mysqld.sock
+
+
+
+sudo nano /etc/systemd/system/backend.service
+----
+
+[Unit]
+Description=Backend Service
+After=network.target mysql.service
+Requires=mysql.service
+
+[Service]
+User=ubuntu
+ExecStart=/usr/bin/java -jar /home/ubuntu/sportsbackend.jar
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+
+sudo nano /etc/systemd/system/auto-update.service
+---
+[Unit]
+Description=Automatic APT Update and Upgrade Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/apt update -y
+ExecStart=/usr/bin/apt upgrade -y
+ExecStart=/usr/bin/apt autoremove -y
+ExecStart=/usr/bin/apt clean
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+Extra
+--
+delete it
+sudo systemctl status apt-update-upgrade.service
+---
+
+
+
+
+
+
+
+
+
+
+
+Modified
+========
+
+apt-update-upgrade.service
+---
+[Unit]
+Description=Automatic APT and Snap Update and Upgrade Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -c 'while fuser /var/lib/apt/lists/lock; do echo "Waiting for apt lock to release..."; sleep 5; done; /usr/bin/apt update -y && /usr/bin/apt upgrade -y && /usr/bin/apt autoremove -y && /usr/bin/apt clean && /usr/bin/snap refresh'
+RemainAfterExit=yes
+TimeoutSec=10s   # Ensure the service doesn't hang during shutdown
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+backend.service
+---
+[Unit]
+Description=Backend Service
+After=network-online.target mysql.service
+Wants=network-online.target mysql.service
+Requires=network-online.target mysql.service
+DefaultDependencies=no
+Before=shutdown.target reboot.target halt.target
+Conflicts=shutdown.target reboot.target halt.target
+
+[Service]
+User=ubuntu
+ExecStart=/usr/bin/java -jar /home/ubuntu/sportsbackend.jar
+ExecStop=/bin/kill -SIGTERM $MAINPID
+KillMode=control-group
+Restart=on-failure
+RestartSec=10
+StartLimitBurst=5
+StartLimitIntervalSec=60
+TimeoutStartSec=30
+TimeoutStopSec=10s
+SuccessExitStatus=143
+RestartPreventExitStatus=0
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=backend-service
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+sudo nano /etc/systemd/system/auto-update.service
+---
+[Unit]
+Description=Automatic APT Update and Upgrade Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/apt update -y
+ExecStart=/usr/bin/apt upgrade -y
+ExecStart=/usr/bin/apt autoremove -y
+ExecStart=/usr/bin/apt clean
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

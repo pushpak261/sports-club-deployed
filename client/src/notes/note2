@@ -1,0 +1,168 @@
+
+NavBar and Footer
+--
+
+Navbar.jsx, navbar.css, ApiService is used everywhere.
+
+
+
+Navbar.jsx
+---
+Logo       Search  HomePage  Categories  Login  Account  Cart
+
+first create a variable to hold the search inputs to hold the value you want to search for.
+So every user type in a search item to search. This is going to store the item by using a useState to store it.
+Bring navigate to navigate into different pages.
+Check if it is a user or an admin. If authenticated then you want to show Account if not then show Login If you are a Admin then show an Admin Profile here.
+Also check if you are a normal user.
+Now create a variable a function named handleSearchChange to set the user search value. So when you type in a value you want to search, you just want to use this to collect
+the value and then store it on our search value variable.
+I am also going to have a method to handle the submit when you click on search.
+
+In home page implementation we are going to see how to collect the search value and used to query the database to return those items.
+Lets have a method to logout in case a user wants to logout and also display the logout button if a user is not logged in.
+If a user is logged in I want to display a logged out button and If the user is not logged in then I will have to display a login button.
+
+handleSearchChange method : onchange if there is a change, if a user start typing is going to trigger the Onchange and when that happen we just want to collect the value and save it.
+And those search changes are going to collect the value and save it in this searchValue variable. which is going to be displayed again to the user.
+
+Now write implementation of the remaining of list items.
+
+
+HomePage Categories, My Account, Admin, Login, Logout, Cart
+Wrap this in condition like if you are authenticated then show your account. while if you are an admin than show admin page,
+if you are not authenticated then show a Login, but if you are authenticated dont show a login, for the other one if you
+are authenticated then show a log out.
+at last export our item.
+
+Now write styling for our navbar.
+
+
+
+Footer.jsx
+---
+return template
+About Us   Contact Us   Terms & Conditions   Privacy Policy   FAQs
+
+&copy; 2024 Sports Club. All right reserved.
+
+at last export our item.
+Now write styling for this in footer.css
+
+
+Clear all content in App.js.
+
+Now configure in App.js
+import all required components in this.
+in return statement clear all contents.
+lets wrap everything in browser router.
+I am going to wrap everything inside a CartProvider
+inside this we have a navbar and footer and all routes (endpoints) are wrapped inside Routes. like
+home, login, logout routes.
+
+logo is in public folder.
+
+
+Dependencies:
+--
+npm install react-router-dom
+npm install axios
+
+
+
+HomePage Page, Product, and Pagination Component
+---
+
+First we need to have a component that is going to hold the list of products.
+The HomePage Page is going to have 2 components one is going to hold the product list and another one
+is going to contain hold this lead to pagination.
+So we are going to first have our product list component which is going to be rendered on the home page and the pagination
+component.
+
+
+ProductList.jsx (HomePage Page)
+--
+product cards.
+
+Refer CartContext for understanding...
+List of products.
+
+The component is ProductList which is going to be accepting a props called products is going to be an array of products.
+So when we go to our homepage, and make http call is going to fetch all the products we are going to collect the products and pass it to the product list
+component which is going to display.So this is going to accept the products that we got from our endpoint.
+In homepage whenever a product is displayed we should be able to add a product to cart, and we should be able to add a product to cart, increment, decrement
+the number of products we have on the cart. And whenever we perform such operation it should also display in homepage.
+Here we are going to use cartContext to manage our cart.
+
+dispatch is going to be useCart custom hook.
+create a function to add product to the cart.
+create a function to increment, decrement, remove the product.
+Atlast return our template.
+here use the javascript to map the products that we are passing in, and we are going to output the product.
+if the product is added to the cart then we have to display the no. of products in the cart. If the product is not found in the cart
+then we just want to add the button to cart.
+
+Now I want to wrap entire product within a link. So when you click on it it takes you to the product details so you can see the details of the product.
+Now I am going to have a condition statement to display the button. So I already have here to check if the item is on a cart item here.
+If the product is not in the cart than display Add To Cart button.
+
+
+Now let's move to product list styling. productList.css
+
+
+
+Now create a Pagination component
+
+Pagination.jsx
+--
+1 2 3 4 5 6 7 8 >> 99
+
+I want to create a component that is going to show all the pages we are in.
+And when we click on the page, it should display the items on that page.
+Implementation of that component is going to be in HomePage Page. which is where we are calling the component.
+
+const Pagination is going to collect a currentPage that we are in. These are props that is going to be coming from the home page
+or the page where the component is going to be mounted.
+Then the totalPage to the pages that exist is going to be also coming in then onPageChange. So this is going to be a function that is going
+to be called when the page is changed. So those are going to be on the home page implementation. but we are passing the properties down here.
+First create an array of the page numbers. and use for loop.
+then return template.
+
+now write css for it.
+
+
+
+HomePage.jsx
+--
+
+hold parameter.
+create a product to get a product.SetProducts is going to be useState and its going to be an array of products.
+Now we are going to use useEffect to write our fetch product. and here we are going to keep an eye on our parameter, which is going to be location.search
+If we have a searchValue in, our parameter is going to trigger this effect.
+we can navigate like go to 1st, 2nd ...99 page.
+create a function to fetchProducts
+In our home page we are just checking if the user is trying to search a product and if it is we are storing the product as search item.
+If we are actually trying to make a search then lets make a http call to search for that product
+In our postman we we see getAllProducts. Our product is an array which is stored in a variable as product list.
+So when we make a call to our service and we want to get in our product, we are going to just use the product list variable
+here to get an array of a product. So we are basically storing that as our products here.
+If user is not trying to make a search lets just make a call to get all products. so we are basically get all products from our DB.
+Product is going to be the response of a product list.
+Total no .of Pages required will be total products that are returned from the database divide by the total number of items we want.
+
+now call method fetchProducts.
+
+Atlast return our template
+in div bring our components like ProductList, Pagination.
+then export HomePage.
+
+Now lets have styling for HomePage Page. home.css
+
+Now Configure components routing in App.jss
+
+In HomePage Page Products are coming from ProductList.
+
+
+
+
+

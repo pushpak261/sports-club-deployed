@@ -1,0 +1,33 @@
+/*.home{*/
+/*    padding: 20px;*/
+/*}*/
+/*.error-message{*/
+/*    text-align: center;*/
+/*    color: red;*/
+/*    font-size: 20px;*/
+/*    margin-top: 20px;*/
+/*}*/
+
+
+
+
+
+/* Navbar styling should be added separately if needed */
+
+.home-content {
+    position: relative;
+    overflow: hidden;
+}
+
+.home {
+    position: relative;
+    z-index: 1;
+}
+
+.error-message {
+    color: red;
+    font-size: 1.2em;
+    margin-top: 20px;
+    position: relative;
+    z-index: 2;
+}

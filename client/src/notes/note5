@@ -1,0 +1,285 @@
+
+Admin Dashboard and Management
+--
+
+Admin Page and Category Management
+---
+
+Welcome Admin
+
+Manage Categories
+Manage Products
+Manage Orders
+
+An admin can manage a category, can manage a product and manage all orders.
+
+So in categories page Admin can add, edit, delete, categories. Same for Products and
+for Orders.
+
+Orders
+Filter By Status                                       Search By Status
+
+Order Id    Customer    Status    Price    Date Ordered    Actions
+
+
+
+AdminPage.jsx
+---
+
+3 Buttons
+--
+Manage Categories
+Manage Products
+Manage Orders
+
+After that configure in App.js. We have AdminRoute bcz we have only admin to access that endpoint eg: AdminPage
+and also add styling for that.
+
+Now write impl for manage category page.
+
+
+Categories
+Add Category
+
+Cricket             Edit  Delete
+FootBall            Edit  Delete
+
+
+AdminCategoryPage.jsx
+--
+
+create arrow function and we are going to first of all get our categories from our API.
+So useEffect whenever a user comes and admin comes to our site for the first time. lets just fetch our categories.
+api call to get all categories.
+
+When you click on the Edit we want to navigate to a page where you can edit the details of this category just to change the name. handleEdit
+handleEdit lets  have a method to delete the category also. handleDelete
+now lets return our template
+write styling for this.
+At last configure App.js
+
+
+
+Write a method to be able to Add and Edit the Category
+
+AdminAddCategory.jsx
+---
+
+create a method called AddCategory ans set a category name which is useState.
+lets have a msg to display whether the category was added successfully.
+and lets have navigate to leave when have successfully added a category.
+lets have a method to submit called handleSubmit.
+and at last return template.
+lets have styling for it.
+and configure in App.js
+
+
+EditCategory.jsx
+---
+
+create a method called fetchCategory.
+lets create handleSubmit.at last return our template.
+configure App.js
+
+Admin -> Manage Categories -> Edit  Delete
+
+
+
+Admin Products Management
+---
+
+We hava already Manage Category. Now create similar implementation to manage a product.
+But the difference is that we are going to use pagination bcz for products, we can have thousands of products on our
+system, and we will not be able to display thousands of products at a page.
+So we are adding pagination so you can move from one page to another.
+
+
+
+AdminProductPage.jsx
+---
+
+create a function AdminProductPage and this is going to be an arrow function component. since we are going to be having
+pagination and we are going to be getting our products from DB.
+fetchProducts method we are getting our product first and we are just saving the product at product list bcz when you get your response you are going to contain
+lot of stuff. So you have to get the product list array out of it, which we are saving as product list.
+we want to know total products that we are getting from our API, and total no. of pages.
+Lets trigger useEffect so when this component is mounted lets just call the fetchProducts and lets just watch out for a change in our current products page.
+So whenever our page is changes we are going to return this fetchProduct basically which is going to be setProducts by using the next 10 products on our page.
+So lets have a method to handle an edit and delete as we have in Categories.
+At last return template.
+Write Styling for this.
+Now provide routing in App.js
+
+
+Products
+Add Product
+
+Cricket                     Edit   Delete
+FootBall                    Edit   Delete
+Shoes                       Edit   Delete
+Others                      Edit   Delete
+
+
+1 2 3
+
+
+Lets have Implementation to add a product to edit and delete a product.
+
+If we are trying to delete a product which is ordered then it could not be delete bcz product has been ordered. But we can delete product that are not currently ordered.
+
+
+AdminAddProductPage.jsx
+---
+
+create AddProductPage arrow function and we are going to have some states bcz to add a product we will be needing
+categoryId, image, name, description, price. create a state to hold those data from input.
+I want to get a list of our categories so we can select which category the product will belong to that we want to add.
+When admin comes to add product page, First of all I want to fetch to get all the list of categories. So display that
+for the user to choose from. So we use UseEffect.
+we are going to have a method to capture our image bcz we need to add the image to the product we want to upload. so lets call this as handleImage.
+So lets have a method handleSubmit so when you have filled the product form you want to submit.
+After we are successfully added the product then go back to the product page.
+At last return template.
+
+categories.map will be taking categories as a list of categories we are picking each of them as category. And we are displaying the name of the category as an option.
+and when you click on that when you select that option we are going to get the categoryId and we are going to set the value of here as categoryId and that value is what we will be
+passing in as the form data, as the categoryId. So we can save this product on this category.
+
+setName method to get the name.
+
+make http call and return products.
+
+Now configure in App.js
+
+
+
+Lets add implementation to edit this Product.
+
+
+
+AdminEditProductPage.jsx
+---
+method EditProductPage, handleImageChange, handleSubmit.
+
+when we select an image we want to also display the image for the user to see the image that was selected.
+At last return Template.
+submit is going to trigger handleSubmit.
+Now configure in App.js
+
+
+Eg:
+--
+
+Edit Product
+
+choose file
+
+Select Category
+Product Name
+Description
+Price
+            Update
+
+
+
+
+Admin Orders Management
+---
+
+we are going to proceed to write implementation to manage orders.
+To Search you need to be making an API call to get fresh data.
+
+Orders
+Filter By Status:                   Search By Status:
+
+Order ID   Customer   Status   Price   Date Ordered   Actions
+
+
+
+1 2 3
+
+
+
+AdminOrderPage.jsx
+---
+
+You have an order status in your table and have an API that is going to return PENDING, CONFIRMED,....
+We are going to have useEffect whenever this component is mounted we just want to get all the orders. and lets keep a watch on our searchStatus on our currentPage.
+lets have a method called fetchOrders. make api call to get all orders.
+orderItemList is the variable that holds all order item list.
+response.orderItemList will give you all orders
+lets have a handleFilterChange.
+handleSearchStatusChange method is going to collect our value that we want to search for and then pass it along search order details.
+lets have a method to navigate when you click on Details then it will navigate to details page. where you
+can change the status and view the details and the user information who ordered the item, the address where the item will be delivered to the payment details.
+handleOrderDetails method.
+
+and at last return template.
+provide styling for it.
+and configure in App.js.
+
+
+Lets have the implementation to get order details.
+If I click on Details then it should be navigate to OrderDetailsPage. where we should get the full information about this order.
+I am going to get the user who booked it, the user address, where the order will be shipped to, and actually be able to change or update the status of this order.
+
+
+
+AdminOrderDetailsPage.jsx
+---
+create a arrow function called AdminOrderDetailsPage
+
+lets called useState whenever this component is mounted or whenever or whenever there is a change in our order ID which is our item ID,
+lets run this function called fetchOrderDetails inside this I am going to pass itemId.
+In try block I am going to make http call to get the order item by ID.
+orderItemList is going to be holding the list of orders. That's going to be holding the information of order which is going to be list format.
+Now create a handleStatusChange method to be able to select the order status it is going to take orderItemId, newStatus.
+I am going to be set the status, get the order Id and change the status which is going to be orderItemId.
+in this we are getting all our selected status and we are seeing the one that has the order item just change the status.
+Now create a handleSubmitStatus method to save it.
+At last return a template.
+
+Order Information : order item id, quantity, total price, order status, date ordered
+
+User Information : name, email, phone no, role
+
+Delivery Address : country, state, city, street, zipcode
+
+Product Information : name, description, price
+
+Admin should be able to change the status of this item.
+Change Status
+
+Now write styling for this.
+and Configure in App.js.
+
+
+------------THE END----------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,154 @@
+
+Install Node jS from chrome
+
+Now build Frontend
+
+go to directory
+
+npx create-react-app client
+
+Now install required dependencies
+
+we are going to need axios for making http call.
+
+npm install axios
+npm install react-router-dom
+npm start
+
+
+clean App.css, index.css
+
+in service folder we have api service class.
+in common folder we have common like navbar, footer.
+in pages folder we have login, logout, profile.
+context folder help us to manage our cart.
+
+create folders like component, service, style.
+inside component create admin, common, context, pages.
+
+We are using ApiService to make HTTP calls.
+
+
+ApiService.js   //javascript file
+Here I am bringing axios
+lets export our class default ApiService
+I am going to have my baseURL which is localhost:2424.
+Lets create a method getHeader for us to head over here for us to, you know, bundle onto our token and pass in.
+So for all endpoints that require authentication, we are going to be passing in our header which is going to be authenticated on the API.
+Lets get our token and store token in the local storage.
+whenever a user is logged in we are going to collect the token and store it in the local storage. So whenever that user tries to access endpoints that
+are protected, we are going to get the token & passing into the header to the endpoints.
+
+...
+take the token that was stored and then return an object of Authorization, For our Authorization our token is of bearer type and pass token in it and ContentType is optional.
+
+Auth & Users EndPoint (API)
+Here all methods are going to be static.
+registerUser is a method and we are passing registration object into it and get our response with the help of post req we are passing endpoints for register and also passing the registration as the body. and we are going to get the data which is actual response.
+
+now create a methods for a loginUser, getLoggedInUserInfo (not taking an obj, but passing a body which is header for token. due to endpoint protection)
+
+
+Product Endpoint (API)
+create a method to add a product.
+addProduct is a method and it is taking a formData as a object and and get our response with the help of post req we are passing endpoints for adding product and also passing the formData as the body. and inside it which is headers and set Content-Type to multipart.
+and we are going to get the data which is actual response.
+
+now create a method for updateProduct, getAllProduct (not taking obj and body)
+searchProducts, getAllProductsByCategoryId, getProductById, deleteProduct.
+
+
+Category Endpoint (API)
+create a method to create a category.
+createCategory is a method and it is taking a body as a object and get our response with the help of post req we are passing endpoints for creating a category and also passing the body as the body. and inside it which is headers for authentication.
+and we are going to get the data which is actual response.
+
+now create a methods for getAllCategory, getCategoryById, updateCategory, deleteCategory,
+
+
+Order Endpoint (API)
+create a method to create a order.
+createOrder is a method and it is taking a body as a object and get our response with the help of post req we are passing endpoints for creating a order and also passing the body as the body. and inside it which is headers for authentication. //like logged in user is the one who is creating an order.
+and returning the response as the data.
+
+now create a methods for getAllOrders, getOrderItemById, getAllOrderItemsByStatus, updateOrderItemStatus
+
+
+Address Endpoint (API)
+When a user logged in he should be able to save and update his address.
+
+create a method for saveAddress
+
+
+Authentication Checker Endpoint (API)
+
+create a method for logout
+when you when you click on logout we want to remove the token from user.
+if the user is logged in then we save the token.
+Token are used for verification.
+when you are logging out, we are removing token and we are also removing role.
+So Role and the token are going to be used to differentiate an admin from a normal user from an authenticated person.
+
+isAuthenticated method : is going to check if you have a token irrespective of whether you are an admin or you are a user.
+
+isAdmin : method to check if a person is a admin. This returns true if a role is a admin else false if role is not an admin.
+
+
+Note:
+In our application most of our endpoints are protected. So before you access them you have to pass in your authorization which is basically your Bearer.
+
+
+Guard:-
+
+Note:
+This is an ecommerce platform and on this platform we have URL that is publicly accessible.
+We have URL that are accessible by users only.
+We have URL that are accessible by admin only.
+Now we are going to be having a function that have all the URL. and we dont want users to be able to access an admin URL.
+We dont want the public which is unauthorized users, those who do not have an account on the platform to be able to access the users
+endpoint or the admin endpoint. So bcz of that, we will be needing a guard which will be used to protect those endpoints.
+And before you can access those endpoints you must be authenticated.
+
+
+Guard.js
+Guard is used to protect the endpoints.
+Here i am going to have 2 guards. A having two methods to protect the users endpoint and also to protect the admin endpoint.
+
+first create a method that is going to protect a USer endpoint.
+
+protectedRoute is going to take element which is component.and perform operation on it.
+first i am going to bring location. we want to get the current location or the page where the person is.
+then check user is authenticated then pass a component.
+So if the user is not authenticated then we want the user to navigate to a login route.
+So that means if a user is trying to access on a protected route where he is not authorized we are going to navigate the user to login page.
+And after the user has successfully logged in we are going to allow the user to access the route where he wanted to go.
+
+If anybody visit our website and he does not have an account he should not be able to make an order.So this method is going to protect that User.
+
+Now Lets have an implementation to protect the AdminRoute.
+If he is an admin than allow him to access the endpoints. but if he is not an admin then he should be navigated to the login page.
+If its successfully logged in, then allow the person to go back to the admin page.
+
+
+Cart Context:-
+Now write custom context to manage our cart.
+In homepage when we add item then cart page will open and items are stored in a cart and we can see all the products which are added in the cart and also total price of that
+we can also increment and decrement items.
+We are going to create an array to hold these items. And we dont want a situation like when you refresh your page your items in your cart are gone.
+So bcz of that we are going to be using a local storage to temporarily hold our item.
+So whenever you refresh your page the items are still going to be there.
+And we will be using the context API to create a context that is going to manage this implementation. So whenever the item is on our platform, its going to be reflected everywhere.
+
+
+CartContext.js
+createContext is going to be used to manage our products and our cards throughout our application.
+create a variable to hold items in the cart and called this initialState.
+create a method called cartReducer. This method is going to be used to manage the actions that are going to be performing on our cart such as incrementing, decrementing, removing an item from the cart.
+ADD_ITEM, REMOVE_ITEM, INCREMENT_ITEM, DECREMENT_ITEM, CLEAR_CART
+
+cartProvider method is going to help to keep track on our cart states.
+useEffect to ensure that the cart is updated in local storage whenever state is changed.
+
+useCart method
+
+

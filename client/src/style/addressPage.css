@@ -1,0 +1,174 @@
+/* Glassmorphism card floating over the fullscreen map */
+.address-page {
+    position: relative;
+    max-width: 520px;
+    margin: 40px auto;
+    padding: 30px 28px;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    z-index: 10;
+}
+
+.address-page h2 {
+    text-align: center;
+    margin-bottom: 22px;
+    font-size: 24px;
+    color: #1a3d6d;
+    font-weight: 700;
+}
+
+.address-page form {
+    display: flex;
+    flex-direction: column;
+}
+
+.address-page label {
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #333;
+}
+
+.address-page input {
+    padding: 10px 12px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    font-size: 15px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.address-page input:focus {
+    outline: none;
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+}
+
+/* Button row */
+.address-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.address-buttons button {
+    flex: 1;
+    padding: 12px 20px;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.address-buttons button[type="submit"] {
+    background-color: #f08c42;
+}
+
+.address-buttons button[type="submit"]:hover {
+    background-color: #d4741e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(240, 140, 66, 0.4);
+}
+
+.show-map-btn {
+    background-color: #1a73e8 !important;
+}
+
+.show-map-btn:hover {
+    background-color: #1558b0 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.4);
+}
+
+/* Map section — sits behind the form, no extra margin needed */
+.map-section {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: auto;
+}
+
+/* Status messages */
+.error-message {
+    color: #d32f2f;
+    margin-bottom: 18px;
+    text-align: center;
+    font-weight: 500;
+    background: rgba(211, 47, 47, 0.08);
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.geocode-loading {
+    color: #1a73e8;
+    text-align: center;
+    font-weight: 500;
+    margin-bottom: 15px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .address-page {
+        max-width: 88%;
+        padding: 22px 18px;
+        margin: 25px auto;
+    }
+
+    .address-page h2 {
+        font-size: 20px;
+    }
+
+    .address-page input {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .address-buttons button {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .address-page {
+        max-width: 95%;
+        padding: 16px 14px;
+        margin: 15px auto;
+    }
+
+    .address-page h2 {
+        font-size: 18px;
+    }
+
+    .address-page input {
+        padding: 7px 8px;
+        font-size: 13px;
+        margin-bottom: 14px;
+    }
+
+    .address-buttons {
+        flex-direction: column;
+    }
+
+    .address-buttons button {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+}

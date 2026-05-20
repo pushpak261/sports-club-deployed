@@ -1,0 +1,111 @@
+/*.add-category-page{*/
+/*    max-width: 600px;*/
+/*    margin: 50px auto;*/
+/*    padding: 20px;*/
+/*    border: 1px solid #ccc;*/
+/*    border-radius: 5px;*/
+/*}*/
+/*.category-form{*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*}*/
+/*.category-form h2{*/
+/*    font-size: 24px;*/
+/*    margin-bottom: 10px;*/
+/*}*/
+/*.category-form input{*/
+/*    padding: 10px;*/
+/*    margin-bottom: 10px;*/
+/*    font-size: 16px;*/
+/*}*/
+/*.category-form button{*/
+/*    background-color: #f08c42;*/
+/*    color: #fff;*/
+/*    border: none;*/
+/*    font-size: 16px;*/
+/*    cursor: pointer;*/
+/*    padding: 13px 20px;*/
+/*}*/
+/*.category-form button:hover{*/
+/*    background-color: #c4803c;*/
+/*}*/
+
+.add-category-page {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.category-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.category-form h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.category-form input {
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.category-form button {
+    background-color: #f08c42;
+    color: #fff;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 13px 20px;
+}
+
+.category-form button:hover {
+    background-color: #c4803c;
+}
+
+@media (max-width: 768px) {
+    .add-category-page {
+        max-width: 90%;
+        padding: 15px;
+    }
+
+    .category-form h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .category-form input {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .category-form button {
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .add-category-page {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .category-form h2 {
+        font-size: 18px;
+    }
+
+    .category-form input {
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .category-form button {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+}

@@ -1,0 +1,45 @@
+
+How to run github project
+----
+
+Create all missing files and folder in right directory and location.
+
+package.json missing
+public folder missing
+index.html missing
+App.js missing
+index.js missing
+
+client -> public folder
+public folder -> index.html
+src folder -> index.js, App.js
+
+npm install, npm start
+
+
+and keep logo in public folder
+
+
+===============
+
+
+
+
+I had made some changes to make website Responsive.
+
+
+
+Responsive Website:
+---
+
+Making NavBar and Footer responsive by applying css and media queries.
+Making ProductList Responsive means Add To cart is removed and description is also responsive.
+Making Product Details Responsive for all devices.
+And at last making pagination responsive like if more pagination buttons so hide it and show ...
+
+
+
+I Had made some changes in Navbar.css like applying navy blue light color. and also applied light orange color to all components of dark orange color.
+
+
+I had apply media queries to all css ... To amke responsive for android also
