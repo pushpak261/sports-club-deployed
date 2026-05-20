@@ -29,7 +29,7 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/**", "/category/**", "/product/**", "/order/**", "/images/**").permitAll()
+                        .requestMatchers("/auth/**", "/category/**", "/product/**", "/order/**", "/images/**", "/actuator/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager-> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
