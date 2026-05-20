@@ -96,6 +96,12 @@
 			<artifactId>caffeine</artifactId>
 		</dependency>
 
+		<!-- Caffeine JCache Bridge (required for Hibernate to use Caffeine via JCache) -->
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine-jcache</artifactId>
+		</dependency>
+
 		<!-- Spring Boot Actuator — health checks, metrics, monitoring -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
