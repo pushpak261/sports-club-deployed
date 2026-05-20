@@ -1,65 +1,50 @@
 package com.ecommerce.sportshub.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.UUID;
+import java.util.Base64;
 
 /**
- * Local file storage service replacing AWS S3.
- * Saves uploaded product images to a local directory on disk and
- * returns a URL that Spring Boot serves via the /images/** endpoint.
+ * Image storage service that converts uploaded images to Base64 data URIs.
+ * The data URI is stored directly in the database, so images survive
+ * container restarts and redeploys (Render free tier has ephemeral storage).
  */
 @Service
 @Slf4j
 public class LocalFileStorageService {
 
-    @Value("${file.upload-dir:uploads/images}")
-    private String uploadDir;
-
-    @Value("${APP_BASE_URL:http://localhost:2424}")
-    private String appBaseUrl;
-
     /**
-     * Saves the given image to the local upload directory and returns
-     * the publicly accessible URL for that image.
+     * Converts the uploaded image to a Base64 data URI string.
+     * This string can be used directly in HTML img src attributes.
      *
      * @param photo the image file uploaded via multipart form
-     * @return the HTTP URL at which the image can be accessed
+     * @return a data URI string (e.g., "data:image/png;base64,iVBOR...")
      */
     public String saveImageToLocal(MultipartFile photo) {
         try {
-            // Resolve absolute upload directory path and create if missing
-            Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-            Files.createDirectories(uploadPath);
-
-            // Generate a unique filename to avoid collisions
-            String originalFilename = photo.getOriginalFilename();
-            String extension = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            // Determine the MIME type
+            String contentType = photo.getContentType();
+            if (contentType == null) {
+                contentType = "image/jpeg"; // fallback
             }
-            String uniqueFilename = UUID.randomUUID().toString() + extension;
 
-            // Copy the uploaded bytes to the target location
-            Path targetLocation = uploadPath.resolve(uniqueFilename);
-            Files.copy(photo.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            // Convert to Base64
+            byte[] imageBytes = photo.getBytes();
+            String base64 = Base64.getEncoder().encodeToString(imageBytes);
 
-            log.info("Image saved locally at: {}", targetLocation);
+            // Build the data URI
+            String dataUri = "data:" + contentType + ";base64," + base64;
 
-            // Return the URL Spring Boot will serve this file at
-            return appBaseUrl + "/images/" + uniqueFilename;
+            log.info("Image converted to Base64 data URI ({} bytes)", imageBytes.length);
+
+            return dataUri;
 
         } catch (IOException e) {
-            log.error("Failed to save image locally", e);
-            throw new RuntimeException("Unable to save image locally: " + e.getMessage());
+            log.error("Failed to convert image to Base64", e);
+            throw new RuntimeException("Unable to process image: " + e.getMessage());
         }
     }
 }

@@ -17,7 +17,10 @@ public class Product {
 
     private String name;
     private String description;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String imageUrl;
+
     private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,8 +29,5 @@ public class Product {
 
     @Column(name = "created_at")
     private final LocalDateTime createdAt = LocalDateTime.now();
-
-
-    //Modified
 
 }
