@@ -4,7 +4,7 @@
     max-width: 520px;
     margin: 40px auto;
     padding: 30px 28px;
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     border: 1px solid rgba(255, 255, 255, 0.5);
@@ -30,25 +30,30 @@
 .address-page label {
     margin-bottom: 10px;
     font-weight: 600;
-    color: #333;
+    color: #222;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
 }
 
 .address-page input {
     padding: 10px 12px;
     margin-bottom: 18px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.6);
     border-radius: 8px;
     font-size: 15px;
     width: 100%;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
+    color: #111;
 }
 
 .address-page input:focus {
     outline: none;
     border-color: #1a73e8;
-    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+    background: rgba(255, 255, 255, 0.75);
 }
 
 /* Button row */
@@ -107,7 +112,7 @@
     margin-bottom: 18px;
     text-align: center;
     font-weight: 500;
-    background: rgba(211, 47, 47, 0.08);
+    background: rgba(211, 47, 47, 0.1);
     padding: 8px 12px;
     border-radius: 8px;
 }
@@ -131,7 +136,7 @@
         max-width: 88%;
         padding: 22px 18px;
         margin: 20px auto;
-        background: rgba(255, 255, 255, 0.93);
+        background: rgba(255, 255, 255, 0.75);
     }
 
     .address-page h2 {
@@ -149,20 +154,22 @@
     }
 }
 
-/* Mobile */
+/* Mobile — map stays visible, card is glassmorphism */
 @media (max-width: 480px) {
     .address-page {
         max-width: 92%;
-        padding: 18px 16px;
+        padding: 20px 16px;
         margin: 12px auto;
-        background: #ffffff;
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 14px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
     }
 
     .address-page h2 {
-        font-size: 18px;
+        font-size: 19px;
         margin-bottom: 16px;
     }
 
@@ -175,8 +182,8 @@
         padding: 10px;
         font-size: 14px;
         margin-bottom: 14px;
-        background: #f8f8f8;
-        border: 1px solid #ddd;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.5);
     }
 
     .address-buttons {
@@ -189,9 +196,9 @@
         font-size: 14px;
     }
 
-    /* Keep map alive but invisible on mobile (display:none crashes Leaflet) */
+    /* Map stays visible on mobile */
     .map-section {
-        opacity: 0;
+        opacity: 1;
         pointer-events: none;
     }
 }
