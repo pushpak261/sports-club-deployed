@@ -4,13 +4,14 @@
     max-width: 520px;
     margin: 40px auto;
     padding: 30px 28px;
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
     z-index: 10;
+    box-sizing: border-box;
 }
 
 .address-page h2 {
@@ -41,6 +42,7 @@
     width: 100%;
     background: rgba(255, 255, 255, 0.7);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
 }
 
 .address-page input:focus {
@@ -88,7 +90,7 @@
     box-shadow: 0 4px 12px rgba(26, 115, 232, 0.4);
 }
 
-/* Map section — sits behind the form, no extra margin needed */
+/* Map section — fullscreen behind the form */
 .map-section {
     position: fixed;
     top: 0;
@@ -123,12 +125,13 @@
     50% { opacity: 0.5; }
 }
 
-/* Responsive */
+/* Tablet */
 @media (max-width: 768px) {
     .address-page {
         max-width: 88%;
         padding: 22px 18px;
-        margin: 25px auto;
+        margin: 20px auto;
+        background: rgba(255, 255, 255, 0.92);
     }
 
     .address-page h2 {
@@ -146,29 +149,44 @@
     }
 }
 
+/* Mobile */
 @media (max-width: 480px) {
     .address-page {
-        max-width: 95%;
-        padding: 16px 14px;
-        margin: 15px auto;
+        max-width: 92%;
+        padding: 18px 16px;
+        margin: 12px auto;
+        background: rgba(255, 255, 255, 0.96);
+        border-radius: 12px;
     }
 
     .address-page h2 {
         font-size: 18px;
+        margin-bottom: 16px;
+    }
+
+    .address-page label {
+        font-size: 14px;
+        margin-bottom: 8px;
     }
 
     .address-page input {
-        padding: 7px 8px;
-        font-size: 13px;
+        padding: 10px;
+        font-size: 14px;
         margin-bottom: 14px;
     }
 
     .address-buttons {
         flex-direction: column;
+        gap: 10px;
     }
 
     .address-buttons button {
-        padding: 10px 14px;
-        font-size: 13px;
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    /* Hide map on very small screens — form takes full focus */
+    .map-section {
+        display: none;
     }
 }
