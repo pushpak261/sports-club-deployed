@@ -4,15 +4,16 @@ import com.ecommerce.sportshub.dto.*;
 import com.ecommerce.sportshub.entity.*;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
+/**
+ * Centralized entity-to-DTO mapper.
+ * Uses .toList() (Java 21) for immutable, faster list creation.
+ * Null-safe: checks all relationships before traversing.
+ */
 @Component
 public class EntityDtoMapper {
 
-
-    //user entity to user DTO
-
-    public UserDto mapUserToDtoBasic(User user){
+    /** Map User entity to basic DTO (no relations loaded) */
+    public UserDto mapUserToDtoBasic(User user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setPhoneNumber(user.getPhoneNumber());
@@ -20,11 +21,10 @@ public class EntityDtoMapper {
         userDto.setRole(user.getRole().name());
         userDto.setName(user.getName());
         return userDto;
-
     }
 
-    //Address to DTO Basic
-    public AddressDto mapAddressToDtoBasic(Address address){
+    /** Map Address entity to DTO */
+    public AddressDto mapAddressToDtoBasic(Address address) {
         AddressDto addressDto = new AddressDto();
         addressDto.setId(address.getId());
         addressDto.setCity(address.getCity());
@@ -35,17 +35,16 @@ public class EntityDtoMapper {
         return addressDto;
     }
 
-    //Category to DTO basic
-    public CategoryDto mapCategoryToDtoBasic(Category category){
+    /** Map Category entity to DTO */
+    public CategoryDto mapCategoryToDtoBasic(Category category) {
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setId(category.getId());
         categoryDto.setName(category.getName());
         return categoryDto;
     }
 
-
-    //OrderItem to DTO Basics
-    public OrderItemDto mapOrderItemToDtoBasic(OrderItem orderItem){
+    /** Map OrderItem entity to basic DTO (no product/user loaded) */
+    public OrderItemDto mapOrderItemToDtoBasic(OrderItem orderItem) {
         OrderItemDto orderItemDto = new OrderItemDto();
         orderItemDto.setId(orderItem.getId());
         orderItemDto.setQuantity(orderItem.getQuantity());
@@ -55,8 +54,8 @@ public class EntityDtoMapper {
         return orderItemDto;
     }
 
-    //Product to DTO Basic
-    public ProductDto mapProductToDtoBasic(Product product){
+    /** Map Product entity to DTO */
+    public ProductDto mapProductToDtoBasic(Product product) {
         ProductDto productDto = new ProductDto();
         productDto.setId(product.getId());
         productDto.setName(product.getName());
@@ -66,58 +65,41 @@ public class EntityDtoMapper {
         return productDto;
     }
 
-    public UserDto mapUserToDtoPlusAddress(User user){
+    /** Map User with Address (2 entities → 1 DTO) */
+    public UserDto mapUserToDtoPlusAddress(User user) {
         UserDto userDto = mapUserToDtoBasic(user);
-        if (user.getAddress() != null){
-
-            AddressDto addressDto = mapAddressToDtoBasic(user.getAddress());
-            userDto.setAddress(addressDto);
-
+        if (user.getAddress() != null) {
+            userDto.setAddress(mapAddressToDtoBasic(user.getAddress()));
         }
         return userDto;
     }
 
-
-    //orderItem to DTO plus product
-    public OrderItemDto mapOrderItemToDtoPlusProduct(OrderItem orderItem){
+    /** Map OrderItem with Product (2 entities → 1 DTO) */
+    public OrderItemDto mapOrderItemToDtoPlusProduct(OrderItem orderItem) {
         OrderItemDto orderItemDto = mapOrderItemToDtoBasic(orderItem);
-
         if (orderItem.getProduct() != null) {
-            ProductDto productDto = mapProductToDtoBasic(orderItem.getProduct());
-            orderItemDto.setProduct(productDto);
+            orderItemDto.setProduct(mapProductToDtoBasic(orderItem.getProduct()));
         }
         return orderItemDto;
     }
 
-
-    //OrderItem to DTO plus product and user
-    public OrderItemDto mapOrderItemToDtoPlusProductAndUser(OrderItem orderItem){
+    /** Map OrderItem with Product + User (3 entities → 1 DTO) */
+    public OrderItemDto mapOrderItemToDtoPlusProductAndUser(OrderItem orderItem) {
         OrderItemDto orderItemDto = mapOrderItemToDtoPlusProduct(orderItem);
-
-        if (orderItem.getUser() != null){
-            UserDto userDto = mapUserToDtoPlusAddress(orderItem.getUser());
-            orderItemDto.setUser(userDto);
+        if (orderItem.getUser() != null) {
+            orderItemDto.setUser(mapUserToDtoPlusAddress(orderItem.getUser()));
         }
         return orderItemDto;
     }
 
-
-    //USer to DTO with Address and Order Items History
+    /** Map User with Address + full Order History (N entities → 1 DTO) */
     public UserDto mapUserToDtoPlusAddressAndOrderHistory(User user) {
         UserDto userDto = mapUserToDtoPlusAddress(user);
-
         if (user.getOrderItemList() != null && !user.getOrderItemList().isEmpty()) {
-            userDto.setOrderItemList(user.getOrderItemList()
-                    .stream()
+            userDto.setOrderItemList(user.getOrderItemList().stream()
                     .map(this::mapOrderItemToDtoPlusProduct)
-                    .collect(Collectors.toList()));
+                    .toList());
         }
         return userDto;
-
     }
-
-
-
-
-
 }

@@ -148,7 +148,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public Response searchProduct(String searchValue) {
-        List<Product> products = productRepo.findByNameContainingOrDescriptionContaining(searchValue, searchValue);
+        List<Product> products = productRepo.searchByNameOrDescription(searchValue);
 
         if (products.isEmpty()) {
             throw new NotFoundException("No Products Found");
