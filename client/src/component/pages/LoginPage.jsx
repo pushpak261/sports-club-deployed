@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import '../../style/registerPage.css'
 
@@ -14,6 +14,10 @@ const LoginPage = () => {
     const [message, setMessage] = useState(null);
     const navigate = useNavigate();
 
+    // If already logged in, redirect to profile
+    if (ApiService.isAuthenticated()) {
+        return <Navigate to="/profile" replace />;
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
