@@ -112,7 +112,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Response getUserInfoAndOrderHistory() {
-        User user = getLoginUser();
+        // N+1 FIX: Use JOIN FETCH to load user + address + orders + products in ONE query
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepo.findByEmailWithOrdersAndAddress(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not found"));
         UserDto userDto = entityDtoMapper.mapUserToDtoPlusAddressAndOrderHistory(user);
 
         return Response.builder()

@@ -12,6 +12,8 @@ import com.ecommerce.sportshub.service.LocalFileStorageService;
 import com.ecommerce.sportshub.service.interf.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "productById"}, allEntries = true)
     public Response createProduct(Long categoryId, MultipartFile image, String name, String description, BigDecimal price) {
         Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category not found"));
         String productImageUrl = localFileStorageService.saveImageToLocal(image);
@@ -54,6 +57,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "productById"}, allEntries = true)
     public Response updateProduct(Long productId, Long categoryId, MultipartFile image, String name, String description, BigDecimal price) {
         Product product = productRepo.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
 
@@ -83,6 +87,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "productById"}, allEntries = true)
     public Response deleteProduct(Long productId) {
         Product product = productRepo.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
         productRepo.delete(product);
@@ -95,6 +100,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "productById", key = "#productId")
     public Response getProductById(Long productId) {
         Product product = productRepo.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
         ProductDto productDto = entityDtoMapper.mapProductToDtoBasic(product);
@@ -107,6 +113,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "products")
     public Response getAllProducts() {
         List<ProductDto> productList = productRepo.findAll(Sort.by(Sort.Direction.DESC, "id"))
                 .stream()

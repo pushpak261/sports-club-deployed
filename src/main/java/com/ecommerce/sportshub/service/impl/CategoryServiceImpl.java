@@ -9,6 +9,8 @@ import com.ecommerce.sportshub.repository.CategoryRepo;
 import com.ecommerce.sportshub.service.interf.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "categories", allEntries = true)
     public Response createCategory(CategoryDto categoryRequest) {
         Category category = new Category();
         category.setName(categoryRequest.getName());
@@ -39,6 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"categories", "categoryById"}, allEntries = true)
     public Response updateCategory(Long categoryId, CategoryDto categoryRequest) {
         Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category Not Found"));
         category.setName(categoryRequest.getName());
@@ -51,6 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "categories")
     public Response getAllCategories() {
         List<Category> categories = categoryRepo.findAll();
         List<CategoryDto> categoryDtoList = categories.stream()
@@ -65,6 +70,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "categoryById", key = "#categoryId")
     public Response getCategoryById(Long categoryId) {
         Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category Not Found"));
         CategoryDto categoryDto = entityDtoMapper.mapCategoryToDtoBasic(category);
@@ -76,6 +82,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"categories", "categoryById"}, allEntries = true)
     public Response deleteCategory(Long categoryId) {
         Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category Not Found"));
         categoryRepo.delete(category);
