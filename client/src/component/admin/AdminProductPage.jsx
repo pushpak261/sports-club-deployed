@@ -1,6 +1,4 @@
-
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import '../../style/adminProductPage.css'
 import Pagination from "../common/Pagination";
@@ -15,28 +13,27 @@ const AdminProductPage = () => {
     const itemsPerPage = 10;
 
 
-    const fetchProducts = async() => {
+    const fetchProducts = useCallback(async () => {
         try {
             const response = await ApiService.getAllProducts();
             const productList = response.productList || [];
-            setTotalPages(Math.ceil(productList.length/itemsPerPage));
-            setProducts(productList.slice((currentPage -1) * itemsPerPage, currentPage * itemsPerPage));
+            setTotalPages(Math.ceil(productList.length / itemsPerPage));
+            setProducts(productList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
         } catch (error) {
             setError(error.response?.data?.message || error.message || 'unable to fetch products')
-
         }
-    }
-
-    useEffect(()=>{
-        fetchProducts();
     }, [currentPage]);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
 
     const handleEdit = async (id) => {
         navigate(`/admin/edit-product/${id}`)
     }
-    const handleDelete = async(id) => {
-        const confirmed = window.confirm("Are your sure you want to delete this product? ")
-        if(confirmed){
+    const handleDelete = async (id) => {
+        const confirmed = window.confirm("Are you sure you want to delete this product? ")
+        if (confirmed) {
             try {
                 await ApiService.deleteProduct(id);
                 fetchProducts();
@@ -46,27 +43,27 @@ const AdminProductPage = () => {
         }
     }
 
-    return(
+    return (
         <div className="admin-product-list">
             {error ? (
                 <p className="error-message">{error}</p>
-            ): (
+            ) : (
                 <div>
                     <h2>Products</h2>
-                    <button className="product-btn" onClick={()=> {navigate('/admin/add-product'); }}>Add product</button>
+                    <button className="product-btn" onClick={() => { navigate('/admin/add-product'); }}>Add product</button>
                     <ul>
-                        {products.map((product)=>(
+                        {products.map((product) => (
                             <li key={product.id}>
                                 <span>{product.name}</span>
-                                <button className="product-btn" onClick={()=> handleEdit(product.id)}>Edit</button>
-                                <button className="product-btn-delete" onClick={()=> handleDelete(product.id)}>Delete</button>
+                                <button className="product-btn" onClick={() => handleEdit(product.id)}>Edit</button>
+                                <button className="product-btn-delete" onClick={() => handleDelete(product.id)}>Delete</button>
                             </li>
                         ))}
                     </ul>
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
-                        onPageChange={(page)=> setCurrentPage(page)}/>
+                        onPageChange={(page) => setCurrentPage(page)} />
                 </div>
             )}
         </div>

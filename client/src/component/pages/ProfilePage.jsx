@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import '../../style/profilePage.css';
@@ -12,19 +12,21 @@ const ProfilePage = () => {
     const itemsPerPage = 5;
     const navigate = useNavigate();
 
-
-    useEffect(() => {
-
-        fetchUserInfo();
-    }, []);
-    const fetchUserInfo = async () => {
-
+    const fetchUserInfo = useCallback(async () => {
         try {
             const response = await ApiService.getLoggedInUserInfo();
             setUserInfo(response.user);
         } catch (error) {
             setError(error.response?.data?.message || error.message || 'Unable to fetch user info');
         }
+    }, []);
+
+    useEffect(() => {
+        fetchUserInfo();
+    }, [fetchUserInfo]);
+
+    if (error && !userInfo) {
+        return <div className="profile-page"><p className="error-message">{error}</p></div>;
     }
 
     if (!userInfo) {
@@ -43,9 +45,6 @@ const ProfilePage = () => {
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
-
-
-
 
     return (
         <div className="profile-page">
@@ -80,9 +79,9 @@ const ProfilePage = () => {
                     <ul>
                         {paginatedOrders.map(order => (
                             <li key={order.id}>
-                                <img src={order.product?.imageUrl} alt={order.product.name} />
+                                <img src={order.product?.imageUrl} alt={order.product?.name} />
                                 <div>
-                                    <p><strong>Name: </strong>{order.product.name}</p>
+                                    <p><strong>Name: </strong>{order.product?.name}</p>
                                     <p><strong>Status: </strong>{order.status}</p>
                                     <p><strong>Quantity: </strong>{order.quantity}</p>
                                     <p><strong>Price: </strong>{order.price.toFixed(2)}</p>

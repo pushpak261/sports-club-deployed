@@ -15,22 +15,24 @@ const CategoryProductsPage = () => {
     const [error, setError] = useState(null);
     const itemsPerPage = 8;
 
+    // Reset to page 1 when category changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [categoryId]);
 
     useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await ApiService.getAllProductsByCategoryId(categoryId);
+                const allProducts = response.productList || [];
+                setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
+                setProducts(allProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+            } catch (error) {
+                setError(error.response?.data?.message || error.message || 'unable to fetch products by category id')
+            }
+        };
         fetchProducts();
     }, [categoryId, currentPage]);
-
-    const fetchProducts = async () => {
-        try {
-
-            const response = await ApiService.getAllProductsByCategoryId(categoryId);
-            const allProducts = response.productList || [];
-            setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
-            setProducts(allProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-        } catch (error) {
-            setError(error.response?.data?.message || error.message || 'unable to fetch products by categoty id')
-        }
-    }
 
 
     return(
