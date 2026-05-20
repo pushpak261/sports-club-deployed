@@ -13,7 +13,9 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {
+    @Index(name = "idx_users_email", columnList = "email", unique = true)
+})
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,7 +38,7 @@ public class User {
     @NotBlank(message = "Phone number is required")
     private  String phoneNumber;
 
-    private UserRole role;   //UserRole is defined in enums
+    private UserRole role;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderItem> orderItemList;

@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public Response registerUser(UserDto registrationRequest) {
         UserRole role = UserRole.USER;
 
@@ -52,7 +54,6 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         User savedUser = userRepo.save(user);
-        System.out.println(savedUser);
 
         UserDto userDto = entityDtoMapper.mapUserToDtoBasic(savedUser);
         return Response.builder()
@@ -65,6 +66,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public Response loginUser(LoginRequest loginRequest) {
 
         User user = userRepo.findByEmail(loginRequest.getEmail()).orElseThrow(()-> new NotFoundException("Email not found"));
@@ -83,12 +85,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Response getAllUsers() {
 
         List<User> users = userRepo.findAll();
         List<UserDto> userDtos = users.stream()
                 .map(entityDtoMapper::mapUserToDtoBasic)
-                .toList();
+                .collect(Collectors.toList());
 
         return Response.builder()
                 .status(200)
@@ -97,15 +100,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getLoginUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String  email = authentication.getName();
-        log.info("User Email is: " + email);
+        log.info("User Email is: {}", email);
         return userRepo.findByEmail(email)
                 .orElseThrow(()-> new UsernameNotFoundException("User Not found"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Response getUserInfoAndOrderHistory() {
         User user = getLoginUser();
         UserDto userDto = entityDtoMapper.mapUserToDtoPlusAddressAndOrderHistory(user);

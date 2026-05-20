@@ -9,6 +9,7 @@ import com.ecommerce.sportshub.service.interf.AddressService;
 import com.ecommerce.sportshub.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class AddressServiceImpl implements AddressService {
 
 
     @Override
+    @Transactional
     public Response saveAndUpdateAddress(AddressDto addressDto) {
         User user = userService.getLoginUser();
         Address address = user.getAddress();

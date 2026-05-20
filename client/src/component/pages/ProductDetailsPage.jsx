@@ -55,7 +55,8 @@ const ProductDetailsPage = () => {
 
     return (
         <div className="product-detail">
-            <img src={product?.imageUrl} alt={product?.name} />
+            {/* PERFORMANCE: lazy loading for product detail image */}
+            <img src={product?.imageUrl} alt={product?.name} loading="lazy" />
             <h1>{product?.name}</h1>
             <p>{product?.description}</p>
             <span>${product.price.toFixed(2)}</span>

@@ -9,7 +9,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-@Table(name = "order_items")
+@Table(name = "order_items", indexes = {
+    @Index(name = "idx_order_items_user_id", columnList = "user_id"),
+    @Index(name = "idx_order_items_product_id", columnList = "product_id"),
+    @Index(name = "idx_order_items_order_id", columnList = "order_id"),
+    @Index(name = "idx_order_items_status", columnList = "status")
+})
 public class OrderItem {
 
     @Id
@@ -18,7 +23,7 @@ public class OrderItem {
 
     private int quantity;
     private BigDecimal price;
-    private OrderStatus status;    //is used from enum
+    private OrderStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -34,6 +39,5 @@ public class OrderItem {
 
     @Column(name = "created_at")
     private final LocalDateTime createdAt = LocalDateTime.now();
-
 
 }

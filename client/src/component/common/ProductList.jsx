@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import '../../style/productList.css';
@@ -6,18 +6,18 @@ import '../../style/productList.css';
 const ProductList = ({ products }) => {
     const { cart, dispatch } = useCart();
 
-    const incrementItem = (product) => {
+    const incrementItem = useCallback((product) => {
         dispatch({ type: 'INCREMENT_ITEM', payload: product });
-    }
+    }, [dispatch]);
 
-    const decrementItem = (product) => {
+    const decrementItem = useCallback((product) => {
         const cartItem = cart.find(item => item.id === product.id);
         if (cartItem && cartItem.quantity > 1) {
             dispatch({ type: 'DECREMENT_ITEM', payload: product });
         } else {
             dispatch({ type: 'REMOVE_ITEM', payload: product });
         }
-    }
+    }, [cart, dispatch]);
 
     return (
         <div className="product-list">
@@ -26,7 +26,13 @@ const ProductList = ({ products }) => {
                 return (
                     <div className="product-item" key={product.id}>
                         <Link to={`/product/${product.id}`}>
-                            <img src={product.imageUrl} alt={product.name} className="product-image" />
+                            {/* PERFORMANCE: lazy loading for below-the-fold images */}
+                            <img
+                                src={product.imageUrl}
+                                alt={product.name}
+                                className="product-image"
+                                loading="lazy"
+                            />
                             <h3>{product.name}</h3>
                             <p>{product.description}</p>
                             <span>${product.price.toFixed(2)}</span>
@@ -45,4 +51,5 @@ const ProductList = ({ products }) => {
     )
 };
 
-export default ProductList;
+// === PERFORMANCE: Memoize to prevent re-renders when parent state changes ===
+export default React.memo(ProductList);

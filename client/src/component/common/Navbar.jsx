@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import '../../style/navbar.css';
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
@@ -8,6 +8,7 @@ const Navbar = () => {
     const [searchValue, setSearchValue] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
+    const debounceTimer = useRef(null);
 
     const { dispatch } = useCart();
 
@@ -24,10 +25,26 @@ const Navbar = () => {
         setSearchValue(e.target.value);
     };
 
-    const handleSearchSubmit = async (e) => {
+    // === PERFORMANCE: Debounced search (400ms) ===
+    const handleSearchSubmit = useCallback((e) => {
         e.preventDefault();
-        navigate(`/?search=${searchValue}`);
-    };
+        // Clear any pending debounce
+        if (debounceTimer.current) {
+            clearTimeout(debounceTimer.current);
+        }
+        debounceTimer.current = setTimeout(() => {
+            navigate(`/?search=${searchValue}`);
+        }, 300);
+    }, [searchValue, navigate]);
+
+    // Cleanup debounce timer on unmount
+    useEffect(() => {
+        return () => {
+            if (debounceTimer.current) {
+                clearTimeout(debounceTimer.current);
+            }
+        };
+    }, []);
 
     const handleLogout = () => {
         const confirm = window.confirm("Are you sure you want to logout?");
@@ -45,7 +62,7 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="navbar-brand">
                 <NavLink to="/" >
-                    <img src="./logo.png" alt="Sports Club" />
+                    <img src="./logo.png" alt="Sports Club" loading="lazy" />
                 </NavLink>
             </div>
             {/* SEARCH FORM */}
@@ -72,4 +89,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default React.memo(Navbar);

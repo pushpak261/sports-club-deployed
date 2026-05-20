@@ -10,6 +10,7 @@ import com.ecommerce.sportshub.service.interf.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,9 +25,8 @@ public class CategoryServiceImpl implements CategoryService {
     private final EntityDtoMapper entityDtoMapper;
 
 
-
-
     @Override
+    @Transactional
     public Response createCategory(CategoryDto categoryRequest) {
         Category category = new Category();
         category.setName(categoryRequest.getName());
@@ -38,6 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public Response updateCategory(Long categoryId, CategoryDto categoryRequest) {
         Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category Not Found"));
         category.setName(categoryRequest.getName());
@@ -49,6 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Response getAllCategories() {
         List<Category> categories = categoryRepo.findAll();
         List<CategoryDto> categoryDtoList = categories.stream()
@@ -62,6 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Response getCategoryById(Long categoryId) {
         Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category Not Found"));
         CategoryDto categoryDto = entityDtoMapper.mapCategoryToDtoBasic(category);
@@ -72,6 +75,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public Response deleteCategory(Long categoryId) {
         Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category Not Found"));
         categoryRepo.delete(category);

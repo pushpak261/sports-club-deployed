@@ -1,206 +1,176 @@
-//
 import axios from "axios";
+
+// === Create an Axios instance with interceptors ===
+const apiClient = axios.create({
+    baseURL: process.env.REACT_APP_API_URL || "http://localhost:2424",
+});
+
+// === REQUEST INTERCEPTOR: Auto-attach auth token ===
+apiClient.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
+// === RESPONSE INTERCEPTOR: Centralized error handling ===
+apiClient.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        // Auto-logout on 401 (expired/invalid token)
+        if (error.response && error.response.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            // Only redirect if not already on login page
+            if (window.location.pathname !== '/login') {
+                window.location.href = '/login';
+            }
+        }
+        return Promise.reject(error);
+    }
+);
 
 export default class ApiService {
 
-    //Here  I had used No Ip dns bcz when I stopped instance so it will automatically configure with instance ip address.
-    // static BASE_URL = "http://sportsclub.ddns.net:2424";
-
-
-    // static BASE_URL = "http://43.204.231.171:2424";
-
-    //ec2-13-201-81-16.ap-south-1.compute.amazonaws.com
-
-    static BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:2424";
-
-
-
-    // static BASE_URL = "http://lightningpushpak.duckdns.org:2424";
-
-    // static BASE_URL = "http://sportsclub.zapto.org:2424";
-
-
-
-
-
-    static getHeader() {
-        const token = localStorage.getItem("token");
-        return {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-        };
-    }
-
-    /**AUTh && USERS API */
+    /**AUTH && USERS API */
     static async registerUser(registration) {
-        const response = await axios.post(`${this.BASE_URL}/auth/register`, registration)
+        const response = await apiClient.post('/auth/register', registration);
         return response.data;
     }
-
 
     static async loginUser(loginDetails) {
-        const response = await axios.post(`${this.BASE_URL}/auth/login`, loginDetails)
+        const response = await apiClient.post('/auth/login', loginDetails);
         return response.data;
     }
-
 
     static async getLoggedInUserInfo() {
-        const response = await axios.get(`${this.BASE_URL}/user/my-info`, {
-            headers: this.getHeader()
-        });
+        const response = await apiClient.get('/user/my-info');
         return response.data;
     }
 
-
     /**PRODUCT ENDPOINT */
-
     static async addProduct(formData) {
-        const response = await axios.post(`${this.BASE_URL}/product/create`, formData, {
-            headers: {
-                ...this.getHeader(),
-                "Content-Type": "multipart/form-data"
-            }
+        const response = await apiClient.post('/product/create', formData, {
+            headers: { "Content-Type": "multipart/form-data" }
         });
         return response.data;
     }
 
     static async updateProduct(formData) {
-        const response = await axios.put(`${this.BASE_URL}/product/update`, formData, {
-            headers: {
-                ...this.getHeader(),
-                "Content-Type": "multipart/form-data"
-            }
+        const response = await apiClient.put('/product/update', formData, {
+            headers: { "Content-Type": "multipart/form-data" }
         });
         return response.data;
     }
 
     static async getAllProducts() {
-        const response = await axios.get(`${this.BASE_URL}/product/get-all`)
+        const response = await apiClient.get('/product/get-all');
         return response.data;
     }
 
     static async searchProducts(searchValue) {
-        const response = await axios.get(`${this.BASE_URL}/product/search`, {
+        const response = await apiClient.get('/product/search', {
             params: { searchValue }
         });
         return response.data;
     }
 
     static async getAllProductsByCategoryId(categoryId) {
-        const response = await axios.get(`${this.BASE_URL}/product/get-by-category-id/${categoryId}`)
+        const response = await apiClient.get(`/product/get-by-category-id/${categoryId}`);
         return response.data;
     }
 
     static async getProductById(productId) {
-        const response = await axios.get(`${this.BASE_URL}/product/get-by-product-id/${productId}`)
+        const response = await apiClient.get(`/product/get-by-product-id/${productId}`);
         return response.data;
     }
 
     static async deleteProduct(productId) {
-        const response = await axios.delete(`${this.BASE_URL}/product/delete/${productId}`, {
-            headers: this.getHeader()
-        });
+        const response = await apiClient.delete(`/product/delete/${productId}`);
         return response.data;
     }
 
     /**CATEGORY */
     static async createCategory(body) {
-        const response = await axios.post(`${this.BASE_URL}/category/create`, body, {
-            headers: this.getHeader()
-        })
+        const response = await apiClient.post('/category/create', body);
         return response.data;
     }
 
     static async getAllCategory() {
-        const response = await axios.get(`${this.BASE_URL}/category/get-all`)
+        const response = await apiClient.get('/category/get-all');
         return response.data;
     }
 
     static async getCategoryById(categoryId) {
-        const response = await axios.get(`${this.BASE_URL}/category/get-category-by-id/${categoryId}`)
+        const response = await apiClient.get(`/category/get-category-by-id/${categoryId}`);
         return response.data;
     }
 
     static async updateCategory(categoryId, body) {
-        const response = await axios.put(`${this.BASE_URL}/category/update/${categoryId}`, body, {
-            headers: this.getHeader()
-        })
+        const response = await apiClient.put(`/category/update/${categoryId}`, body);
         return response.data;
     }
 
     static async deleteCategory(categoryId) {
-        const response = await axios.delete(`${this.BASE_URL}/category/delete/${categoryId}`, {
-            headers: this.getHeader()
-        })
+        const response = await apiClient.delete(`/category/delete/${categoryId}`);
         return response.data;
     }
 
-    /**ORDEDR */
+    /**ORDER */
     static async createOrder(body) {
-        const response = await axios.post(`${this.BASE_URL}/order/create`, body, {
-            headers: this.getHeader()
-        })
+        const response = await apiClient.post('/order/create', body);
         return response.data;
     }
 
     static async getAllOrders() {
-        const response = await axios.get(`${this.BASE_URL}/order/filter`, {
-            headers: this.getHeader()
-        })
+        const response = await apiClient.get('/order/filter');
         return response.data;
     }
 
     static async getOrderItemById(itemId) {
-        const response = await axios.get(`${this.BASE_URL}/order/filter`, {
-            headers: this.getHeader(),
-            params: {itemId}
-        })
+        const response = await apiClient.get('/order/filter', {
+            params: { itemId }
+        });
         return response.data;
     }
 
     static async getAllOrderItemsByStatus(status) {
-        const response = await axios.get(`${this.BASE_URL}/order/filter`, {
-            headers: this.getHeader(),
-            params: {status}
-        })
+        const response = await apiClient.get('/order/filter', {
+            params: { status }
+        });
         return response.data;
     }
 
     static async updateOrderitemStatus(orderItemId, status) {
-        const response = await axios.put(`${this.BASE_URL}/order/update-item-status/${orderItemId}`, {}, {
-            headers: this.getHeader(),
-            params: {status}
-        })
+        const response = await apiClient.put(`/order/update-item-status/${orderItemId}`, {}, {
+            params: { status }
+        });
         return response.data;
     }
-
-
-
 
     /**ADDRESS */
     static async saveAddress(body) {
-        const response = await axios.post(`${this.BASE_URL}/address/save`, body, {
-            headers: this.getHeader()
-        })
+        const response = await apiClient.post('/address/save', body);
         return response.data;
     }
 
-    /***AUTHEMNTICATION CHECKER */
-    static logout(){
-        localStorage.removeItem('token')
-        localStorage.removeItem('role')
+    /**AUTHENTICATION CHECKER */
+    static logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
     }
 
-    static isAuthenticated(){
-        const token = localStorage.getItem('token')
-        return !!token
+    static isAuthenticated() {
+        const token = localStorage.getItem('token');
+        return !!token;
     }
 
-    static isAdmin(){
-        const role = localStorage.getItem('role')
-        return role === 'ADMIN'
+    static isAdmin() {
+        const role = localStorage.getItem('role');
+        return role === 'ADMIN';
     }
-
 }
-
-
